@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="css/styles.css">
+	<title>Practice site</title>
+</head>
+<body>
+	<div class="link">
+	<a class="links" href="http://localhost/Practice_Site/register.php">Registrarse</a>
+
+	<a class="links" href="http://localhost/Practice_Site/login.php">Iniciar sesion</a>
+	</div>
+	<h1>Listado de empleados:</h1>
+<?php
+define('DB_HOST','localhost');
+define('DB_USER','root');
+define('DB_PASS','');
+define('DB_NAME','empresa');
+try
+{
+$connect = new PDO("mysql:host=".DB_HOST.";dbname=".DB_NAME,DB_USER, DB_PASS, array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'"));
+	echo '<table class="tablalistado">';
+    	echo '<tr> <th>id</th> <th>first name</th> <th>last name</th> <th>email</th> <th>department</th> <th>Borrar</th> <th>Modificar</th> </tr>';
+	$sql = "SELECT * FROM employees"; 
+	$query = $connect -> prepare($sql); 
+	$query -> execute(); 
+	$results = $query -> fetchAll(PDO::FETCH_OBJ); 
+	if($query -> rowCount() > 0)   { 
+	foreach($results as $result) { 
+	echo "<tr>
+	<td>".$result -> id."</td>
+	<td>".$result -> first_name."</td>
+	<td>".$result -> last_name."</td>
+	<td>".$result -> email."</td>
+	<td>".$result -> department."</td>
+	<td>
+		<form method='POST' action='delete_Employee.php'>
+		<input type='hidden' name='id' value='".$result -> id."'>
+		<button name='borrar'>Borrar</button>
+		</form>
+	</td>
+	<td>
+		<form method='POST' action='update_Employee_Form.php'>
+		<input type='hidden' name='id' value='".$result -> id."'>
+		<button name='modificar1'>Modificar</button>
+		</form>
+	</td>
+	</tr>";
+	}
+	}
+	echo '<tr><td colspan="7">';
+   	echo '<a href="insert_Employee_Form.php">Agrega un nuevo empleado</a>';
+    	echo '</td></tr>';
+	echo '<table>';
+}
+catch (PDOException $e)
+{
+exit("Error: " . $e->getMessage());
+}
+?>
+<!-- http://localhost/PDO_ABC/index.php -->
+</body>
+</html>
